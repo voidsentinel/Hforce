@@ -1,0 +1,4 @@
+{
+    "csharp.suppressHiddenDiagnostics": false,
+    "omnisharp.organizeImportsOnFormat": true
+}

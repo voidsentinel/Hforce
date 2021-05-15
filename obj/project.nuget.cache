@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "htEtuTVxeup4OFGNyWaxuSC+zP3xLfQGmxmp3GeMAr/1Um4UDL59kpjJAfNK0e5RdASbDAZdYEAhbslq4efmBA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\guipatry\\Documents\\Development\\VSCode\\Hforce\\Hforce.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\guipatry\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "C:\\Users\\guipatry\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
+    "C:\\Users\\guipatry\\.nuget\\packages\\system.drawing.common\\5.0.2\\system.drawing.common.5.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
