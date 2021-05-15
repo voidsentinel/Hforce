@@ -103,9 +103,9 @@ namespace Hforce
             while (availablesExits.Count > 0)
             {
                 // Select one door on the map (random)
-                PatternPosition exit = availablesExits[rnd.Next(0, availablesExits.Count)];
+                //PatternPosition exit = availablesExits[rnd.Next(0, availablesExits.Count)];
                 // Select one door on the map (breadth first)
-                // PatternPosition exit = availablesExits[0];
+                PatternPosition exit = availablesExits[0];
                 // Select one door on the map (deapth first)
                 //PatternPosition exit = availablesExits[availablesExits.Count - 1];
 
@@ -228,7 +228,7 @@ namespace Hforce
                 modified = false;
                 foreach (ReplacementRule rule in always)
                 {
-                    modified = modified || map.Replace(rule.InitialContent, rule.ReplacementContent);
+                    modified = modified || map.ReplaceAll(rule.InitialContent, rule.ReplacementContent);
                 }
                 if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount++}.png", map.Content);
             }
@@ -253,7 +253,7 @@ namespace Hforce
             foreach (ReplacementRule rule in sometimes)
             {
                 Logger.Info($" replacement of {rule.InitialContent.Id} by {rule.ReplacementContent.Id} with {rule.Chance}% chance ");
-                map.Replace(rule.InitialContent, rule.ReplacementContent, rule.Chance, "");
+                map.ReplaceAll(rule.InitialContent, rule.ReplacementContent, rule.Chance, "");
                 if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount++}.png", map.Content);
             }
             Logger.Pop();

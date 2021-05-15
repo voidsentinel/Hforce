@@ -1,1 +1,8 @@
 /Hforce.log
+assets/map.png
+bin/Debug/net5.0/*.dll
+obj/Debug/net5.0/*.dll
+bin/Debug/net5.0/ref/*.dll
+obj/Debug/net5.0/ref/*.dll
+bin/Debug/net5.0/*.pdb
+obj/Debug/net5.0/*.pdb
