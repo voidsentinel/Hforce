@@ -8,7 +8,6 @@ namespace Hforce
     {
         /// <summary>
         /// Load all template files in the given directory
-
         /// </summary>
         /// <param name="sourceDirectory"> the directpry where to search for templates</param>
         /// <return> a list of all the templ    ate </return>
@@ -21,7 +20,6 @@ namespace Hforce
 
         /// <summary>
         /// Load all template files in the given directory and put them in the given list
-
         /// </summary>
         /// <param name="sourceDirectory"> the directpry where to search for templates</param>
         /// <param name="templates"> The liust of template to add the templates to</param>
@@ -123,7 +121,7 @@ namespace Hforce
                         sourceId = tmp.Id;
                     tmp.SourceId = sourceId;
                     templates.Add(tmp);
-                    CharUtils.saveAsImage($"./assets/images/{templates._name}_{tmp.Id}.png", copy);
+                    // CharUtils.saveAsImage($"./assets/images/{templates._name}_{tmp.Id}.png", copy);
                     count++;
                 }
             }

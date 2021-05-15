@@ -6,16 +6,16 @@ namespace Hforce
     class MapGenerator1
     {
 
-        private MapTemplateList _rooms;
-        private MapTemplateList _doors;
+        private MapTemplateList _rooms;                // room template
+        private MapTemplateList _doors;                // door template
 
-        private ReplacementRuleList _modifications;
+        private ReplacementRuleList _modifications;    // replacement rules
 
+        // rooms grouped by doors type (id)
         private Dictionary<int, MapTemplateList> doorGroups = new Dictionary<int, MapTemplateList>();
 
         private Random rnd = new Random(666);
 
-        private List<PatternPosition> toRemoveExit = new List<PatternPosition>();
         private int operationCount = 0;
 
         public bool Debug { get; set; }
@@ -89,32 +89,30 @@ namespace Hforce
             Logger.Info($"Generation for map size {map.XSize}x{map.YSize}", Logger.LogAction.PUSH);
             List<PatternPosition> availablesExits = new List<PatternPosition>();
             List<PatternPosition> usedRooms = new List<PatternPosition>();
-            int count = 0;
+            List<PatternPosition> rejectedExits = new List<PatternPosition>();
 
             // use given entry as the initial entry/door
             map.Place(_doors.Find(entry.id), entry.x, entry.y);
             availablesExits.Add(entry);
             // also add it to the toremove (it will not be used by another room...)
-            // since it's the first, it will be the "Up"
-            toRemoveExit.Add(entry);
+            // since it's the first, it will be the "Up" (see ManageEntries)
+            rejectedExits.Add(entry);
 
-            if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount}.png", map.Content);
-            count++;
+            if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount++}.png", map.Content);
             // While there are not checked exits
             while (availablesExits.Count > 0)
             {
                 // Select one door on the map (random)
-                // PatternPosition exit = availablesExits[rnd.Next(0, availablesExits.Count)];
+                PatternPosition exit = availablesExits[rnd.Next(0, availablesExits.Count)];
                 // Select one door on the map (breadth first)
-                PatternPosition exit = availablesExits[0];
+                // PatternPosition exit = availablesExits[0];
                 // Select one door on the map (deapth first)
                 //PatternPosition exit = availablesExits[availablesExits.Count - 1];
 
                 // try to place a room to this exit
-                this.PlaceRoomForDoor(map, exit, availablesExits, usedRooms);
+                this.PlaceRoomForDoor(map, exit, availablesExits, usedRooms, rejectedExits);
 
-                if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount }.png", map.Content);
-                operationCount++;
+                if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount++}.png", map.Content);
                 Logger.Pop();
             }
 
@@ -122,7 +120,7 @@ namespace Hforce
             map.ReplaceAll('?', '#');
 
             // generate an entry and exit
-            ManageEntries(map);
+            ManageEntries(map, rejectedExits);
 
             // remove unwanted artifacts (not used doors...)        
             Clean(map);
@@ -154,7 +152,7 @@ namespace Hforce
         /// <param name="exit">the exit position & pattern</param>
         /// <param name="availablesExits">the list of available exit</param>
         /// <returns>true if a room was placed</returns>
-        private bool PlaceRoomForDoor(Map map, PatternPosition exit, List<PatternPosition> availablesExits, List<PatternPosition> usedRooms)
+        private bool PlaceRoomForDoor(Map map, PatternPosition exit, List<PatternPosition> availablesExits, List<PatternPosition> usedRooms, List<PatternPosition> rejectedExits)
         {
             ;
             MapTemplateList possiblesRooms = doorGroups[exit.id];
@@ -204,7 +202,7 @@ namespace Hforce
             if (!placed)
             {
                 availablesExits.RemoveAll(template => (exit.x == template.x && exit.y == template.y && exit.id == template.id));
-                toRemoveExit.Add(exit);
+                rejectedExits.Add(exit);
             }
             return placed;
         }
@@ -232,8 +230,7 @@ namespace Hforce
                 {
                     modified = modified || map.Replace(rule.InitialContent, rule.ReplacementContent);
                 }
-                if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount }.png", map.Content);
-                operationCount++;
+                if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount++}.png", map.Content);
             }
             Logger.Pop();
         }
@@ -257,8 +254,7 @@ namespace Hforce
             {
                 Logger.Info($" replacement of {rule.InitialContent.Id} by {rule.ReplacementContent.Id} with {rule.Chance}% chance ");
                 map.Replace(rule.InitialContent, rule.ReplacementContent, rule.Chance, "");
-                if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount }.png", map.Content);
-                operationCount++;
+                if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount++}.png", map.Content);
             }
             Logger.Pop();
         }
@@ -382,10 +378,10 @@ namespace Hforce
             }
         }
 
-        private void ManageEntries(Map map)
+        private void ManageEntries(Map map, List<PatternPosition> rejectedExits)
         {
             // choose the exit
-            PatternPosition exitPos = toRemoveExit[0];
+            PatternPosition exitPos = rejectedExits[0];
             // get the template
             MapTemplate door = _doors.Find(exitPos.id);
             // duplicate it and change it
@@ -394,7 +390,7 @@ namespace Hforce
             // update the map
             map.Place(exit, exitPos.x, exitPos.y);
 
-            exitPos = toRemoveExit[toRemoveExit.Count - 1];
+            exitPos = rejectedExits[rejectedExits.Count - 1];
             // get the template
             door = _doors.Find(exitPos.id);
             // duplicate it and change it
