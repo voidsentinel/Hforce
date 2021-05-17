@@ -6,3 +6,9 @@ bin/Debug/net5.0/ref/*.dll
 obj/Debug/net5.0/ref/*.dll
 bin/Debug/net5.0/*.pdb
 obj/Debug/net5.0/*.pdb
+bin/Debug/net5.0/Hforce.dll
+bin/Debug/net5.0/Hforce.pdb
+bin/Debug/net5.0/ref/Hforce.dll
+obj/Debug/net5.0/Hforce.dll
+obj/Debug/net5.0/Hforce.pdb
+obj/Debug/net5.0/ref/Hforce.dll

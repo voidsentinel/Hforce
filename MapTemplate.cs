@@ -182,17 +182,6 @@ namespace Hforce
         }
 
         /// <summary>
-        /// check the template against a given one and return the list of position where both template matche
-        /// </summary>
-        /// <param name="destination">The template to chekc the template against. It should be bigger than the template</param>
-        /// <returns>List of position where the template Matches</returns>
-        public List<Position> Matches(MapTemplate content)
-        {
-            return CharUtils
-                .Matches(map: content.Content, template: Content, "");
-        }
-
-        /// <summary>
         /// check the template against a given position on the map and return true if the template matche
         /// </summary>
         /// <param name="template">The template to check</param>
@@ -201,7 +190,18 @@ namespace Hforce
         /// <returns>true if the template Matches, false otherwise</returns>
         public bool Matches(MapTemplate template, int xpos, int ypos)
         {
-            return CharUtils.Matches(pattern: Content, map: template.Content, xpos: xpos, ypos: ypos);
+            return CharUtils.Match(pattern: Content, map: template.Content, xpos: xpos, ypos: ypos);
+        }
+
+        /// <summary>
+        /// check the template against a given one and return the list of position where both template matche
+        /// </summary>
+        /// <param name="destination">The template to chekc the template against. It should be bigger than the template</param>
+        /// <returns>List of position where the template Matches</returns>
+        public List<Position> Matches(MapTemplate content)
+        {
+            return CharUtils
+                .Matches(map: content.Content, template: Content, "");
         }
 
         /// <summary>
@@ -305,9 +305,9 @@ namespace Hforce
         /// </summary>
         /// <param name="source">the character to replace</param>
         /// <param name="dest">the new character to replace with</param>
-        public void ReplaceAll(char source, char dest)
+        public bool ReplaceAll(char source, char dest)
         {
-            CharUtils.ReplaceAll(Content, source, dest);
+            return CharUtils.ReplaceAll(Content, source, dest);
         }
 
 

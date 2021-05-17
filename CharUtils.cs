@@ -111,7 +111,6 @@ public class CharUtils
 
     }
 
-
     public static char[,] Place(char[,] destination, char[,] source, int xpos, int ypos)
     {
 
@@ -132,15 +131,17 @@ public class CharUtils
         return destination;
     }
 
+
+
     /// <summary>
-    /// check a given template against a given position in a map and return true if the template matche
+    /// check a given template against a given position in a map and return true if the template matche.
     /// </summary>
     /// <param name="map">The map to the template against</param>
-    /// <param name="map">The template to check</param>
+    /// <param name="pattern">The template to check</param>
     /// <param name="xpos">X position</param>
     /// <param name="ypos">Y position</param>
     /// <returns>true if the template Matches, false otherwise</returns>
-    public static bool Matches(char[,] map, char[,] pattern, int xpos, int ypos)
+    public static bool FullMatch(char[,] map, char[,] pattern, int xpos, int ypos)
     {
         if ((xpos + pattern.GetLength(1) - 1 >= map.GetLength(1)) || (ypos + pattern.GetLength(0) - 1 >= map.GetLength(0)))
             return false;
@@ -154,9 +155,44 @@ public class CharUtils
         {
             for (int x2 = 0; x2 < pattern.GetLength(1); x2++)
             {
-                if (pattern[y2, x2] != '?')
-                {
-                    value = value && (pattern[y2, x2] == map[ypos + y2, xpos + x2]);
+                if (!(pattern[y2, x2] == '?' || map[ypos + y2, xpos + x2] == '?')){
+                    if (pattern[y2, x2] != map[ypos + y2, xpos + x2]){
+                        return false;
+                    }
+                }
+            }
+        }
+        return value;
+    }
+
+    /// <summary>
+    /// check a given template against a given position in a map and return true if the template matche.
+    /// Joker (?) in the map are considered as any other characters, but are always considered to match 
+    /// the underlying map in the pattern. This so that a 
+    /// </summary>
+    /// <param name="map">The map to the template against</param>
+    /// <param name="pattern">The template to check</param>
+    /// <param name="xpos">X position</param>
+    /// <param name="ypos">Y position</param>
+    /// <returns>true if the template Matches, false otherwise</returns>
+    public static bool Match(char[,] map, char[,] pattern, int xpos, int ypos)
+    {
+        if ((xpos + pattern.GetLength(1) - 1 >= map.GetLength(1)) || (ypos + pattern.GetLength(0) - 1 >= map.GetLength(0)))
+            return false;
+
+        if ((xpos < 0) || (ypos < 0))
+            return false;
+
+        bool value = true;
+        // check the template
+        for (int y2 = 0; y2 < pattern.GetLength(0); y2++)
+        {
+            for (int x2 = 0; x2 < pattern.GetLength(1); x2++)
+            {
+                if (!(pattern[y2, x2] == '?')){
+                    if (pattern[y2, x2] != map[ypos + y2, xpos + x2]){
+                        return false;
+                    }
                 }
             }
         }
@@ -186,7 +222,7 @@ public class CharUtils
                 {
                     for (int x1 = 0; x1 < map.GetLength(1) - pattern.GetLength(1) + 1; x1++)
                     {
-                        value = Matches(map, pattern, x1, y1);
+                        value = Match(map, pattern, x1, y1);
                         if (value)
                         {
                             response.Add(new Position(x1, y1));
@@ -227,7 +263,7 @@ public class CharUtils
                     for (int x1 = 0; x1 < map.GetLength(1) - patterns[i].GetLength(1) + 1; x1++)
                     {
                         // if it matche
-                        value = Matches(map, patterns[i], x1, y1);
+                        value = Match(map, patterns[i], x1, y1);
                         if (value)
                         {
                             if (rnd.Next(100) < chance)
@@ -243,17 +279,18 @@ public class CharUtils
         return done;
     }
 
-    public static char[,] ReplaceAll(char[,] map, char source, char dest)
-    {
+    public static bool ReplaceAll(char[,] map, char source, char dest)
+    {   bool modified = false;
         for (int y = 0; y < map.GetLength(0); y++)
         {
             for (int x = 0; x < map.GetLength(1); x++)
             {
                 if (map[y, x] == source)
                     map[y, x] = dest;
+                    modified = true;
             }
         }
-        return map;
+        return modified;
     }
 
 

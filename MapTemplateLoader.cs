@@ -117,11 +117,13 @@ namespace Hforce
                 foreach (char[,] copy in mirrors)
                 {
                     MapTemplate tmp = new MapTemplate(copy);
-                    if (count == 0)
+                    if (count == 0){
                         sourceId = tmp.Id;
+                        CharUtils.saveAsImage($"./assets/images/{templates._name}_{tmp.Id}.png", copy);
+                    }
                     tmp.SourceId = sourceId;
                     templates.Add(tmp);
-                    // CharUtils.saveAsImage($"./assets/images/{templates._name}_{tmp.Id}.png", copy);
+                    //CharUtils.saveAsImage($"./assets/images/{templates._name}_{tmp.Id}.png", copy);
                     count++;
                 }
             }

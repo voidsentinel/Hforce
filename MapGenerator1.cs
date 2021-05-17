@@ -116,17 +116,14 @@ namespace Hforce
                 Logger.Pop();
             }
 
-            // change "unknown" to "wall"
-            map.ReplaceAll('?', '#');
-
             // generate an entry and exit
-            ManageEntries(map, rejectedExits);
+            //ManageEntries(map, rejectedExits);
 
             // remove unwanted artifacts (not used doors...)        
-            Clean(map);
+            //Clean(map);
 
             // place some new element / remove some based on pattern
-            Decorate(map);
+            //Decorate(map);
 
 
             Logger.Pop();
@@ -210,6 +207,9 @@ namespace Hforce
         private void Clean(Map map)
         {
             Logger.Info($"Cleaning the map from unwanted artifact", Logger.LogAction.PUSH);
+                        // change "unknown" to "wall"
+            
+            map.ReplaceAll('?', '#');
             bool modified = true;
             // get all rentries that are always used...
             List<ReplacementRule> always = _modifications.collection.FindAll(template => (template.Chance == 100));
@@ -287,24 +287,23 @@ namespace Hforce
                 return false;
             }
 
+            bool value = CharUtils.FullMatch(map : map.Content, pattern : room.Content, xpos, ypos);
+            // for (int y1 = 0; y1 < room.YSize; y1++)
+            // {
+            //     for (int x1 = 0; x1 < room.XSize; x1++)
+            //     {
+            //         if (room.Content[y1, x1] != '?' && map.Content[ypos + y1, xpos + x1] != '?')
+            //         {
+            //             // check if map cont either is "not filled" or filled with same data as room
+            //             if (room.Content[y1, x1] != map.Content[ypos + y1, xpos + x1] )
+            //             {
+            //                 return false;
+            //             }
+            //         }
+            //     }
+            // }
 
-            for (int y1 = 0; y1 < room.YSize; y1++)
-            {
-                for (int x1 = 0; x1 < room.XSize; x1++)
-                {
-                    if (room.Content[y1, x1] != '?')
-                    {
-                        // check if map cont either is "not filled" or filled with same data as room
-                        if (room.Content[y1, x1] != map.Content[ypos + y1, xpos + x1] &&
-                            map.Content[ypos + y1, xpos + x1] != '?')
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            return true;
+            return value;
         }
 
         /// <summary>
