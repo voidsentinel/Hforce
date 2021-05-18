@@ -8,7 +8,6 @@ namespace Hforce
 
         private MapTemplateList _rooms;                // room template
         private MapTemplateList _doors;                // door template
-
         private ReplacementRuleList _modifications;    // replacement rules
 
         // rooms grouped by doors type (id)
@@ -19,17 +18,6 @@ namespace Hforce
         private int operationCount = 0;
 
         public bool Debug { get; set; }
-
-        /// <summary>
-        /// This structure is used to store the position and Id of a pattern (template) on the map 
-        /// </summary>
-        public class PatternPosition
-        {
-            public int x = 0;
-            public int y = 0;
-            public int id = 0;
-        }
-
 
         public MapGenerator1(MapTemplateList rooms, MapTemplateList doors, ReplacementRuleList modifications)
         {
@@ -47,12 +35,12 @@ namespace Hforce
             Logger.Pop();
         }
 
-        // /// <summary>
-        // /// Place all rooms into buckets depending on the doors they conatins.
-        // /// A room can be in several bucket/list, if threre a re differnt type of doors
-        // /// each cell of the  rooms table will contains a list of rooms with the same 
-        // /// knd of doors, the index of the cell beeing the index of the door in the doors table
-        // /// </summary>;
+        /// <summary>
+        /// Place all rooms into buckets depending on the doors they conatins.
+        /// A room can be in several bucket/list, if threre a re differnt type of doors
+        /// each cell of the  rooms table will contains a list of rooms with the same 
+        /// knd of doors, the index of the cell beeing the index of the door in the doors table
+        /// </summary>;
         private void InitializeRooms()
         {
             for (int i = 0; i < _doors.Count(); i++)
@@ -73,6 +61,10 @@ namespace Hforce
         }
 
 
+        /// <summary>
+        /// Generate a dungeon in the given map, from the objects in the lists given in the constructor  
+        /// </summary>
+        /// <param name="map">the map to generate the dungeon in</param>
         public void GenerateMap(Map map)
         {
             Logger.Info($"Generation for map size {map.XSize}x{map.YSize}");
@@ -84,6 +76,11 @@ namespace Hforce
             GenerateMap(map, entry);
         }
 
+        /// <summary>
+        /// Generate a dungeon in the given map, from the objects in the lists given in the constructor  
+        /// </summary>
+        /// <param name="map">the map to generate the dungeon in</param>
+        /// <param name="entry">the entry (door + position) used to start the dungeon</param>
         public void GenerateMap(Map map, PatternPosition entry)
         {
             Logger.Info($"Generation for map size {map.XSize}x{map.YSize}", Logger.LogAction.PUSH);
@@ -117,10 +114,10 @@ namespace Hforce
             }
 
             // generate an entry and exit
-            //ManageEntries(map, rejectedExits);
+            ManageEntries(map, rejectedExits);
 
             // remove unwanted artifacts (not used doors...)        
-            //Clean(map);
+            Clean(map);
 
             // place some new element / remove some based on pattern
             //Decorate(map);
@@ -130,7 +127,12 @@ namespace Hforce
         }
 
 
-
+        /// <summary>
+        ///Generate a random entry to be placed on the map 
+        /// </summary>
+        /// <param name="map">the map where the entry would be placed</param>
+        /// <param name="doors">the list of available door type</param>
+        /// <returns>a position & door type</returns>
         private PatternPosition generateEntry(Map map, MapTemplateList doors)
         {
             MapTemplate door = doors.getTemplate(rnd.Next(doors.Count()));
@@ -204,11 +206,45 @@ namespace Hforce
             return placed;
         }
 
+        /// <summary>
+        /// Select two non used doors and set them as exit of the map; 
+        /// </summary>
+        /// <param name="map">the map to get the entries on</param>
+        /// <param name="rejectedExits">list of non used doors</param>
+        private void ManageEntries(Map map, List<PatternPosition> rejectedExits)
+        {
+            // choose the exit
+            PatternPosition exitPos = rejectedExits[0];
+            // get the template
+            MapTemplate door = _doors.Find(exitPos.id);
+            // duplicate it and change it
+            MapTemplate exit = new MapTemplate(door);
+            CharUtils.ReplaceAll(exit.Content, '=', 'U');
+            // update the map
+            map.Place(exit, exitPos.x, exitPos.y);
+            map.UpExit = exitPos;
+
+            exitPos = rejectedExits[rejectedExits.Count - 1];
+            // get the template
+            door = _doors.Find(exitPos.id);
+            // duplicate it and change it
+            exit = new MapTemplate(door);
+            CharUtils.ReplaceAll(exit.Content, '=', 'D');
+            // update the map
+            map.Place(exit, exitPos.x, exitPos.y);
+            map.DownExit = exitPos;
+        }
+
+        /// <summary>
+        /// Remove unwanted artifact from the map : door leading to nowhere, cul-de-sac...
+        /// This is done by replacement rules with chance = 100 
+        /// </summary>
+        /// <param name="map"></param>
         private void Clean(Map map)
         {
             Logger.Info($"Cleaning the map from unwanted artifact", Logger.LogAction.PUSH);
-                        // change "unknown" to "wall"
-            
+            // change "unknown" to "wall"
+
             map.ReplaceAll('?', '#');
             bool modified = true;
             // get all rentries that are always used...
@@ -235,6 +271,10 @@ namespace Hforce
             Logger.Pop();
         }
 
+        /// <summary>
+        /// replace some part of the map by others, based on pattern matching and randomness 
+        /// </summary>
+        /// <param name="map"></param>
         private void Decorate(Map map)
         {
             Logger.Info($"Modifiying the map ", Logger.LogAction.PUSH);
@@ -287,34 +327,19 @@ namespace Hforce
                 return false;
             }
 
-            bool value = CharUtils.FullMatch(map : map.Content, pattern : room.Content, xpos, ypos);
-            // for (int y1 = 0; y1 < room.YSize; y1++)
-            // {
-            //     for (int x1 = 0; x1 < room.XSize; x1++)
-            //     {
-            //         if (room.Content[y1, x1] != '?' && map.Content[ypos + y1, xpos + x1] != '?')
-            //         {
-            //             // check if map cont either is "not filled" or filled with same data as room
-            //             if (room.Content[y1, x1] != map.Content[ypos + y1, xpos + x1] )
-            //             {
-            //                 return false;
-            //             }
-            //         }
-            //     }
-            // }
-
-            return value;
+            // check that the room can be placed here, taking into accountt the joker on both pattern
+            return CharUtils.FullMatch(map: map.Content, pattern: room.Content, xpos, ypos);
         }
 
         /// <summary>
         /// Place a room on the map.
-        /// Add the exits of the room to the list of available exits for the map generations
+        /// Add the exits of the room to the list of available exits for the map generations, if needed
         /// </summary>
         /// <param name="room"></param>
         /// <param name="xpos"></param>
         /// <param name="ypos"></param>
         /// <param name="availablesExits"></param>
-        /// <param name="used"></param>
+        /// <param name="usedRooms"></param>
         /// <returns>true</returns>
         private bool PlaceRoom(Map map, MapTemplate room, int xpos, int ypos, List<PatternPosition> availablesExits, List<PatternPosition> usedRooms)
         {
@@ -345,7 +370,7 @@ namespace Hforce
             {
                 //find all occurnece of this kind of doors in the room
                 List<Position> doorsList = doorPattern.Matches(room);
-                //doorsList.Shuffle();
+                doorsList.Shuffle();
                 foreach (Position position in doorsList)
                 {
                     PatternPosition roomDoor = new PatternPosition();
@@ -376,29 +401,5 @@ namespace Hforce
                 template.Usage = template.Usage + 1;
             }
         }
-
-        private void ManageEntries(Map map, List<PatternPosition> rejectedExits)
-        {
-            // choose the exit
-            PatternPosition exitPos = rejectedExits[0];
-            // get the template
-            MapTemplate door = _doors.Find(exitPos.id);
-            // duplicate it and change it
-            MapTemplate exit = new MapTemplate(door);
-            CharUtils.ReplaceAll(exit.Content, '=', 'U');
-            // update the map
-            map.Place(exit, exitPos.x, exitPos.y);
-
-            exitPos = rejectedExits[rejectedExits.Count - 1];
-            // get the template
-            door = _doors.Find(exitPos.id);
-            // duplicate it and change it
-            exit = new MapTemplate(door);
-            CharUtils.ReplaceAll(exit.Content, '=', 'D');
-            // update the map
-            map.Place(exit, exitPos.x, exitPos.y);
-
-        }
-
     }
 }

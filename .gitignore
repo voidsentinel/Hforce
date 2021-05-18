@@ -1,5 +1,7 @@
 /Hforce.log
 assets/map.png
+bin/*.*
+obj/*.*
 bin/Debug/net5.0/*.dll
 obj/Debug/net5.0/*.dll
 bin/Debug/net5.0/ref/*.dll
@@ -12,3 +14,8 @@ bin/Debug/net5.0/ref/Hforce.dll
 obj/Debug/net5.0/Hforce.dll
 obj/Debug/net5.0/Hforce.pdb
 obj/Debug/net5.0/ref/Hforce.dll
+obj/Debug/net5.0/Hforce.csproj.CoreCompileInputs.cache
+obj/Debug/net5.0/Hforce.dll
+obj/Debug/net5.0/Hforce.pdb
+obj/Debug/net5.0/ref/Hforce.dll
+obj/Debug/net5.0/Hforce.csproj.CoreCompileInputs.cache
