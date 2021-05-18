@@ -14,7 +14,7 @@ namespace Hforce
         public Map(int X, int Y) : base(X, Y)
         {
             Logger.Info($"Empty map created with size {XSize}x{YSize}");
-            // set the map to jocker content
+            // set the while map to jocker content
             InitializeContent('?');
         }
 

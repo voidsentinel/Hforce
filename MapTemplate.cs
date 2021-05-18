@@ -11,20 +11,22 @@ namespace Hforce
     {
         protected static int created = 0;
 
-        /// <value>get the id of the room. The Id is auto-defined at creation.
+        /// <value>id of the template. The Id is auto-defined at creation.
         public int Id { get; }
 
-        /// <value>get the id of the room. The Id is auto-defined at creation.
+        /// <value>Source id of the template. This is a common id for all version of a template (mirrored, rotated...)
         public int SourceId { get; set; }
 
-        /// <value>get the X SortValue of the room
+        /// <value>X size of the template
         public int XSize { get; }
 
-        /// <value>get the Y SortValue of the room
+        /// <value>Y size of the template
         public int YSize { get; }
 
+        /// Value used to sort the templates. definition may vary...
         public int SortValue { get; }
 
+        /// Number of time this room had been used 
         public int Usage { get; set; }
 
         // the content of the room
@@ -32,12 +34,7 @@ namespace Hforce
 
         /// <summary>
         /// Constructor for a basic room
-
         /// </summary>
-        /// <remarks>
-        /// You need to fille the room later
-        /// </remarks>
-
         public MapTemplate(int X, int Y)
         {
             Id = created;
@@ -105,15 +102,15 @@ namespace Hforce
         }
 
         /// <summary>
-        /// Copy-Constructor for a room
+        /// Copy-Constructor for a template
         /// </summary>
-        public MapTemplate(MapTemplate room)
+        public MapTemplate(MapTemplate template)
         {
             Id = created;
-            SourceId = room.SourceId;
+            SourceId = template.SourceId;
             created = created + 1;
-            XSize = room.XSize;
-            YSize = room.YSize;
+            XSize = template.XSize;
+            YSize = template.YSize;
             SortValue = (XSize + YSize) / 10;
             Usage = 0;
             Content = new char[YSize, XSize];
@@ -121,11 +118,11 @@ namespace Hforce
             {
                 for (int x = 0; x < XSize; x++)
                 {
-                    this.setMapElement(x, y, room.getMapElement(x, y));
+                    this.setMapElement(x, y, template.getMapElement(x, y));
                 }
             }
             Logger
-                .Info($"Template: {Id}/{SourceId} created from {room.Id} with SortValue {XSize}x{YSize}, coeff {SortValue}");
+                .Info($"Template: {Id}/{SourceId} created from {template.Id} with SortValue {XSize}x{YSize}, coeff {SortValue}");
         }
 
         /// <summary>
