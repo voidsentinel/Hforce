@@ -2,6 +2,7 @@
 assets/map.png
 bin/*.*
 obj/*.*
+assets/*.*
 bin/Debug/net5.0/*.dll
 obj/Debug/net5.0/*.dll
 bin/Debug/net5.0/ref/*.dll
