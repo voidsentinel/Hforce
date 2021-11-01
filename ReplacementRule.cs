@@ -48,6 +48,5 @@ namespace Hforce
             return (InitialContent.XSize == ReplacementContent.XSize && InitialContent.YSize == ReplacementContent.YSize);
         }
 
-
     }
 }

@@ -36,7 +36,7 @@ namespace Hforce
         }
 
         /// <summary>
-        /// Place all rooms into buckets depending on the doors they conatins.
+        /// Place all rooms into buckets depending on the doors they contains.
         /// A room can be in several bucket/list, if threre a re differnt type of doors
         /// each cell of the  rooms table will contains a list of rooms with the same 
         /// knd of doors, the index of the cell beeing the index of the door in the doors table
@@ -46,20 +46,22 @@ namespace Hforce
             for (int i = 0; i < _doors.Count(); i++)
             {
                 MapTemplate doorPattern = _doors.getTemplate(i);
+                Logger.Info($"Door {doorPattern.Id}", Logger.LogAction.PUSH);
                 doorGroups[doorPattern.Id] = new MapTemplateList($"door{doorPattern.Id}");
                 for (int j = 0; j < _rooms.Count(); j++)
                 {
                     MapTemplate roomPattern = _rooms.getTemplate(j);
                     if (doorPattern.Matches(roomPattern).Count > 0)
                     {
+                        Logger.Info($"Room {roomPattern.Id} added for this door");
                         doorGroups[doorPattern.Id].Add(roomPattern);
                     }
 
                 }
                 Logger.Info($"Door {doorPattern.Id} contains {doorGroups[doorPattern.Id].Count()} rooms");
+                Logger.Pop();
             }
         }
-
 
         /// <summary>
         /// Generate a dungeon in the given map, from the objects in the lists given in the constructor  
@@ -101,8 +103,10 @@ namespace Hforce
             {
                 // Select one door on the map (random)
                 //PatternPosition exit = availablesExits[rnd.Next(0, availablesExits.Count)];
+
                 // Select one door on the map (breadth first)
                 PatternPosition exit = availablesExits[0];
+
                 // Select one door on the map (deapth first)
                 //PatternPosition exit = availablesExits[availablesExits.Count - 1];
 
@@ -120,7 +124,7 @@ namespace Hforce
             Clean(map);
 
             // place some new element / remove some based on pattern
-            //Decorate(map);
+            Decorate(map);
 
 
             Logger.Pop();

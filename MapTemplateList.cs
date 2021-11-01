@@ -11,7 +11,7 @@ namespace Hforce
     /// </summary>
     public class MapTemplateList : IEnumerable
     {
-        public List<MapTemplate> collection { get; set; }
+        public List<MapTemplate> collection { get; }
 
         public string _name { get; }
 

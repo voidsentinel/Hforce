@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Room Definition.
-/// <para>A room is composed of a n*m array of char, where the chars define what is present at this position in the room
+/// <para>A Map template is composed of a n*m array of char, where the chars define what is present at this position in the map
 
 /// </summary>
 namespace Hforce
@@ -64,6 +64,23 @@ namespace Hforce
             Logger
                 .Info($"Template: {Id}/{SourceId} created with SortValue {XSize}x{YSize}  (Coeff {SortValue})");
         }
+
+        public MapTemplate(char[,] content, int sourceId)
+        {
+            Id = created;
+            SourceId = sourceId;
+            XSize = content.GetLength(1);
+            YSize = content.GetLength(0);
+            SortValue = (XSize + YSize) / 10;
+            Usage = 0;
+            Content = content;
+
+            created = created + 1;
+            Logger
+                .Info($"Template: {Id}/{SourceId} created with SortValue {XSize}x{YSize}  (Coeff {SortValue})");
+        }
+
+
 
         /// <summary>
         /// Create a filled template
@@ -179,7 +196,7 @@ namespace Hforce
         }
 
         /// <summary>
-        /// check the template against a given position on the map and return true if the template matche
+        /// check the current template against a given position on the given map and return true if the template matche
         /// </summary>
         /// <param name="template">The template to check</param>
         /// <param name="xpos">X position</param>
@@ -191,7 +208,7 @@ namespace Hforce
         }
 
         /// <summary>
-        /// check the template against a given one and return the list of position where both template matche
+        /// check the current template against a given map and return the list of position where both template matche
         /// </summary>
         /// <param name="destination">The template to chekc the template against. It should be bigger than the template</param>
         /// <returns>List of position where the template Matches</returns>

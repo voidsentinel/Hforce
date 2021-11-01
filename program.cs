@@ -8,6 +8,8 @@ namespace Hforce
         static void Main(string[] args)
         {
             Logger.initialisation();
+            // get char groups
+            CharGroupsLoader.loadFromDirectory("./assets/");
             // get the rooms & doors template
             MapTemplateList rooms = MapTemplateLoader.loadFromDirectory("./assets/rooms", "rooms");
             // get the rooms & doors template
@@ -16,7 +18,7 @@ namespace Hforce
             ReplacementRuleList modifications = ReplacementRuleLoader.loadFromDirectory("./assets/modifications", "modifications");
 
             // create the map
-            Map map = new Map(100, 100);
+            Map map = new Map(50, 50);
             // create the generator & call it
             MapGenerator1 generator = new MapGenerator1(rooms, doors, modifications);
             generator.GenerateMap(map);

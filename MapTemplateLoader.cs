@@ -90,10 +90,10 @@ namespace Hforce
         }
 
         /// <summary>
-        /// Read a room in the "0" FileFormat
+        /// Read a pattern in the "0" FileFormat
         /// First line is XSize
         ///Second Line is YSize
-        ///Third line are operation to generate Mirror rooms (Rotate : X, H Mirror : X, V Mirror : Y)
+        ///Third line are operation to generate Mirror pattern (Rotate : X, H Mirror : X, V Mirror : Y)
         ///Followed by YSize lines of XSize chars
         /// </summary>
         /// <param name="reader"></param>
@@ -114,14 +114,19 @@ namespace Hforce
                     CharUtils.CreateMirrors(roomData, operations);
                 int count = 0;
                 int sourceId = 0;
+                MapTemplate tmp;
                 foreach (char[,] copy in mirrors)
                 {
-                    MapTemplate tmp = new MapTemplate(copy);
-                    if (count == 0){
+                    if (count == 0)
+                    {
+                        tmp = new MapTemplate(copy);
                         sourceId = tmp.Id;
                         CharUtils.saveAsImage($"./assets/images/{templates._name}_{tmp.Id}.png", copy);
                     }
-                    tmp.SourceId = sourceId;
+                    else
+                    {
+                        tmp = new MapTemplate(copy, sourceId);
+                    }
                     templates.Add(tmp);
                     //CharUtils.saveAsImage($"./assets/images/{templates._name}_{tmp.Id}.png", copy);
                     count++;
@@ -137,7 +142,7 @@ namespace Hforce
 
 
         /// <summary>
-        /// create a room of the given size and load it's content from the reader
+        /// create a pattern of the given size and load it's content from the reader
         /// </summary>
         /// <param name="reader">The reader to the file containing the data</param>
         /// <param name="xsize">The x size of the room</param>
