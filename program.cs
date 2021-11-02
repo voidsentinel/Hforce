@@ -18,7 +18,7 @@ namespace Hforce
             ReplacementRuleList modifications = ReplacementRuleLoader.loadFromDirectory("./assets/modifications", "modifications");
 
             // create the map
-            Map map = new Map(50, 50);
+            Map map = new Map(75, 75);
             // create the generator & call it
             MapGenerator1 generator = new MapGenerator1(rooms, doors, modifications);
             generator.GenerateMap(map);

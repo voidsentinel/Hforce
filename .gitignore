@@ -1,8 +1,8 @@
 /Hforce.log
-assets/map.png
 bin/*.*
 obj/*.*
-assets/*.*
+assets/*.png
+assets/images/*.png
 bin/Debug/net5.0/*.dll
 obj/Debug/net5.0/*.dll
 bin/Debug/net5.0/ref/*.dll

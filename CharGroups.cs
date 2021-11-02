@@ -87,7 +87,15 @@ namespace Hforce
         /// <returns>a group index that represent all the group the character belongs to</returns>
         static public int getCharacterGroups(Char character)
         {
-            return groupsChar[character];
+            if (groupsChar.ContainsKey(character))
+            {
+                return groupsChar[character];
+            }
+            else
+            {
+                Logger.Info($"undefined Character '{character}'; present in no defined group");
+                return 0;
+            }
         }
 
         /// <summary>
@@ -96,8 +104,9 @@ namespace Hforce
         /// <param name="character">the character to check</param>
         /// <param name="group"></param>
         /// <returns></returns>
-        static public Boolean areSameGroup(Char character, int group)
+        static public Boolean areSameGroup(Char character, int group, bool strict = false)
         {
+            if (character == '?' && !strict) return true;
             int g1 = CharGroups.getCharacterGroups(character);
             return ((g1 & group) > 0);
         }
@@ -120,10 +129,14 @@ namespace Hforce
         /// <param name="c1"></param>
         /// <param name="c2"></param>
         /// <returns>true if a groups belongs to both characters</returns>
-        static public bool areSameGroup(Char c1, Char c2)
+        static public bool areSameGroup(Char c1, Char c2, bool strict = false)
         {
+            if ((c1 == '?' || c2 == '?') && !strict)
+            {
+                return true;
+            }
             int g1 = CharGroups.getCharacterGroups(c1);
-            int g2 = CharGroups.getCharacterGroups(c1);
+            int g2 = CharGroups.getCharacterGroups(c2);
             return ((g1 & g2) > 0);
         }
 

@@ -202,9 +202,9 @@ namespace Hforce
         /// <param name="xpos">X position</param>
         /// <param name="ypos">Y position</param>
         /// <returns>true if the template Matches, false otherwise</returns>
-        public bool Matches(MapTemplate template, int xpos, int ypos)
+        public bool Matches(MapTemplate template, int xpos, int ypos, bool strict = false)
         {
-            return CharUtils.Match(pattern: Content, map: template.Content, xpos: xpos, ypos: ypos);
+            return CharUtils.Match(pattern: Content, map: template.Content, xpos: xpos, ypos: ypos, strict: strict);
         }
 
         /// <summary>
@@ -212,10 +212,10 @@ namespace Hforce
         /// </summary>
         /// <param name="destination">The template to chekc the template against. It should be bigger than the template</param>
         /// <returns>List of position where the template Matches</returns>
-        public List<Position> Matches(MapTemplate content)
+        public List<Position> Matches(MapTemplate content, bool strict = false)
         {
             return CharUtils
-                .Matches(map: content.Content, template: Content, "");
+                .Matches(map: content.Content, template: Content, "", strict: strict);
         }
 
         /// <summary>
@@ -224,9 +224,9 @@ namespace Hforce
         /// <param name="template">The template to chek </param>
         /// <param name="operation">operations to perform on the template (RXY) </param>
         /// <returns>List of position where the template Matches</returns>
-        public List<Position> Matches(MapTemplate template, string operations)
+        public List<Position> Matches(MapTemplate template, string operations, bool strict = false)
         {
-            return CharUtils.Matches(Content, template.Content, operations);
+            return CharUtils.Matches(Content, template.Content, operations, strict: strict);
         }
 
         /// <summary>

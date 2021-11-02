@@ -161,7 +161,6 @@ namespace Hforce
                     if (!(pattern[y2, x2] == '?' || map[ypos + y2, xpos + x2] == '?'))
                     {
                         match = CharGroups.areSameGroup(pattern[y2, x2], map[ypos + y2, xpos + x2]);
-                        //                    if (pattern[y2, x2] != map[ypos + y2, xpos + x2])
                         if (!match)
                         {
                             return false;
@@ -183,7 +182,7 @@ namespace Hforce
         /// <param name="xpos">X position</param>
         /// <param name="ypos">Y position</param>
         /// <returns>true if the template Matches, false otherwise</returns>
-        public static bool Match(char[,] map, char[,] pattern, int xpos, int ypos)
+        public static bool Match(char[,] map, char[,] pattern, int xpos, int ypos, bool strict = false)
         {
             bool match = false;
             if ((xpos + pattern.GetLength(1) - 1 >= map.GetLength(1)) || (ypos + pattern.GetLength(0) - 1 >= map.GetLength(0)))
@@ -200,8 +199,7 @@ namespace Hforce
                 {
                     if (!(pattern[y2, x2] == '?'))
                     {
-                        match = CharGroups.areSameGroup(pattern[y2, x2], map[ypos + y2, xpos + x2]);
-                        //                    if (pattern[y2, x2] != map[ypos + y2, xpos + x2])
+                        match = CharGroups.areSameGroup(pattern[y2, x2], map[ypos + y2, xpos + x2], strict);
                         if (!match)
                         {
                             return false;
@@ -223,7 +221,7 @@ namespace Hforce
         /// <param name="template">The template to chek </param>
         /// <param name="operation">operations to perform on the template (RXY) </param>
         /// <returns>List of position where the template Matches</returns>
-        public static List<Position> Matches(char[,] map, char[,] template, String operations)
+        public static List<Position> Matches(char[,] map, char[,] template, String operations, bool strict = false)
         {
             List<char[,]> patterns = CharUtils.CreateMirrors(template, operations);
 
@@ -239,7 +237,7 @@ namespace Hforce
                     {
                         for (int x1 = 0; x1 < map.GetLength(1) - pattern.GetLength(1) + 1; x1++)
                         {
-                            value = Match(map, pattern, x1, y1);
+                            value = Match(map, pattern, x1, y1, strict);
                             if (value)
                             {
                                 response.Add(new Position(x1, y1));
@@ -260,7 +258,7 @@ namespace Hforce
         /// <param name="result">the replacing template</param>
         /// <param name="chance">the chance that the template will be replaced by the result, for each match. Must be between 0 and 100</param>
         /// <returns>true if at least one replacement was made </returns>
-        public static bool Replace(char[,] map, char[,] toFind, char[,] toReplace, int chance, String operations)
+        public static bool Replace(char[,] map, char[,] toFind, char[,] toReplace, int chance, String operations, bool strict = false)
         {
             Random rnd = new Random(111);
             bool value = false;

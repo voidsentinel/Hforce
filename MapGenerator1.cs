@@ -29,7 +29,7 @@ namespace Hforce
             _rooms = rooms;
             _doors = doors;
             _modifications = modifications;
-            Debug = false;
+            Debug = true;
             // put rooms into collections grouped by door type 
             InitializeRooms();
             Logger.Pop();
@@ -70,6 +70,7 @@ namespace Hforce
         public void GenerateMap(Map map)
         {
             Logger.Info($"Generation for map size {map.XSize}x{map.YSize}");
+            operationCount = 0;
             List<PatternPosition> availablesExits = new List<PatternPosition>();
             List<PatternPosition> usedRooms = new List<PatternPosition>();
 
@@ -85,7 +86,6 @@ namespace Hforce
         /// <param name="entry">the entry (door + position) used to start the dungeon</param>
         public void GenerateMap(Map map, PatternPosition entry)
         {
-            Logger.Info($"Generation for map size {map.XSize}x{map.YSize}", Logger.LogAction.PUSH);
             List<PatternPosition> availablesExits = new List<PatternPosition>();
             List<PatternPosition> usedRooms = new List<PatternPosition>();
             List<PatternPosition> rejectedExits = new List<PatternPosition>();
@@ -96,8 +96,8 @@ namespace Hforce
             // also add it to the toremove (it will not be used by another room...)
             // since it's the first, it will be the "Up" (see ManageEntries)
             rejectedExits.Add(entry);
-
             if (Debug) CharUtils.saveAsImage($"./assets/map{operationCount++}.png", map.Content);
+
             // While there are not checked exits
             while (availablesExits.Count > 0)
             {
@@ -144,6 +144,7 @@ namespace Hforce
             entry.y = rnd.Next(1, map.XSize);
             entry.x = rnd.Next(1, map.YSize);
             entry.id = door.Id;
+            Logger.Info($"Putting Entry door type {door.Id} at {entry.x}x{entry.y}");
 
             return entry;
         }
@@ -178,7 +179,7 @@ namespace Hforce
             foreach (MapTemplate room in possiblesRooms)
             {
                 // get all position in this room of the exi we're working on
-                List<Position> possibleExits = _doors.Find(exit.id).Matches(room);
+                List<Position> possibleExits = _doors.Find(exit.id).Matches(room, true);
                 possibleExits.Shuffle();
                 foreach (Position pos in possibleExits)
                 {
@@ -373,7 +374,7 @@ namespace Hforce
             foreach (MapTemplate doorPattern in _doors)
             {
                 //find all occurnece of this kind of doors in the room
-                List<Position> doorsList = doorPattern.Matches(room);
+                List<Position> doorsList = doorPattern.Matches(room, true);
                 doorsList.Shuffle();
                 foreach (Position position in doorsList)
                 {

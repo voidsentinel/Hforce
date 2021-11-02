@@ -35,18 +35,22 @@ namespace Hforce
             try
             {
                 StreamReader reader = new StreamReader(sourceFile);
-                String groupname = reader.ReadLine();
-                String charList = reader.ReadLine();
 
-                int groupId = CharGroups.addGroup(groupname);
-                Logger.Info($"Creating groups {groupname}");
-                for (int i = 0; i < charList.Length; i++)
+                while (true)
                 {
-                    CharGroups.addCharacterGroup(charList[i], groupId);
+                    String groupname = reader.ReadLine();
+                    String charList = reader.ReadLine();
+
+                    int groupId = CharGroups.addGroup(groupname);
+                    Logger.Info($"Creating groups {groupname}");
+                    foreach (char v in charList)
+                    {
+                        CharGroups.addCharacterGroup(v, groupId);
+                    }
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // do nothing
             }
